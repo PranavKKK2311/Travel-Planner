@@ -6,6 +6,8 @@ import { LinearGradient } from "expo-linear-gradient";
 import { IconSymbol } from "@/components/IconSymbol";
 import { Button } from "@/components/button";
 import { colors, commonStyles } from "@/styles/commonStyles";
+import HolidayImageGallery from "@/components/HolidayImageGallery";
+import DestinationCard from "@/components/DestinationCard";
 
 export default function HomeScreen() {
   const features = [
@@ -32,6 +34,45 @@ export default function HomeScreen() {
       description: "Build compelling narratives for interviews",
       icon: "briefcase",
       gradient: colors.gradients.warm,
+    }
+  ];
+
+  const popularDestinations = [
+    {
+      title: "Silicon Valley Tech Hub",
+      location: "San Francisco, CA",
+      imageUrl: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600&h=400&fit=crop",
+      price: "From $1,200",
+      rating: 4.9,
+      highlights: [
+        "Visit Google, Apple, Meta campuses",
+        "Attend tech meetups & conferences",
+        "Network with industry leaders"
+      ]
+    },
+    {
+      title: "Innovation District",
+      location: "Seattle, WA",
+      imageUrl: "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=600&h=400&fit=crop",
+      price: "From $900",
+      rating: 4.8,
+      highlights: [
+        "Microsoft & Amazon headquarters",
+        "Startup ecosystem exploration",
+        "Professional development workshops"
+      ]
+    },
+    {
+      title: "European Tech Capital",
+      location: "Berlin, Germany",
+      imageUrl: "https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?w=600&h=400&fit=crop",
+      price: "From $800",
+      rating: 4.7,
+      highlights: [
+        "Thriving startup scene",
+        "International networking events",
+        "Innovation labs & co-working spaces"
+      ]
     }
   ];
 
@@ -78,6 +119,29 @@ export default function HomeScreen() {
             </Button>
           </View>
         </LinearGradient>
+
+        {/* Holiday Image Gallery */}
+        <HolidayImageGallery />
+
+        {/* Popular Destinations */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>🏆 Top Professional Destinations</Text>
+          <Text style={styles.sectionSubtitle}>
+            Handpicked locations where careers are made
+          </Text>
+          
+          {popularDestinations.map((destination, index) => (
+            <DestinationCard
+              key={index}
+              {...destination}
+              onPress={() => {
+                console.log('Selected destination:', destination.title);
+                router.push('/trip-planner');
+              }}
+              style={styles.destinationCard}
+            />
+          ))}
+        </View>
 
         {/* Features Grid */}
         <View style={styles.section}>
@@ -267,8 +331,19 @@ const styles = StyleSheet.create({
     fontSize: 28,
     fontFamily: 'Poppins_700Bold',
     color: colors.text,
-    marginBottom: 24,
+    marginBottom: 8,
     textAlign: 'center',
+  },
+  sectionSubtitle: {
+    fontSize: 16,
+    fontFamily: 'Nunito_400Regular',
+    color: colors.textSecondary,
+    textAlign: 'center',
+    marginBottom: 24,
+    lineHeight: 22,
+  },
+  destinationCard: {
+    marginBottom: 20,
   },
   featuresGrid: {
     flexDirection: 'row',
