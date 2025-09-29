@@ -10,7 +10,7 @@ export interface TripPreferences {
   hasJobInterview: boolean;
   interviewDate?: string;
   interviewLocation?: string;
-  careerFocus: 'ai-engineering' | 'tech' | 'startup' | 'research' | 'other';
+  careerFocus: 'engineering' | 'tech' | 'startup' | 'research' | 'other';
 }
 
 export interface Activity {
@@ -21,15 +21,15 @@ export interface Activity {
   duration: number; // in hours
   cost: number;
   category: 'sightseeing' | 'networking' | 'learning' | 'relaxation' | 'interview-prep';
-  aiRelevance?: number; // 1-10 scale for AI career relevance
-  recruiterImpact?: string; // Why this would impress recruiters
+  careerRelevance?: number; // 1-10 scale for career relevance
+  professionalImpact?: string; // Why this would impress employers
 }
 
 export interface DayItinerary {
   date: string;
   activities: Activity[];
   totalCost: number;
-  aiScore: number; // How AI-career focused this day is
+  experienceScore: number; // How career-focused this day is
 }
 
 export interface TripItinerary {
@@ -39,12 +39,12 @@ export interface TripItinerary {
   endDate: string;
   days: DayItinerary[];
   totalCost: number;
-  overallAiScore: number;
-  recruiterHighlights: string[];
+  overallScore: number;
+  careerHighlights: string[];
   uniqueSellingPoints: string[];
 }
 
-export interface AIInsight {
+export interface SmartInsight {
   type: 'networking' | 'learning' | 'showcase' | 'preparation';
   title: string;
   description: string;

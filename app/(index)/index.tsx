@@ -2,7 +2,7 @@
 import React from "react";
 import { Stack, router } from "expo-router";
 import { View, Text, StyleSheet, ScrollView, Pressable } from "react-native";
-import { IconCircle } from "@/components/IconCircle";
+import { LinearGradient } from "expo-linear-gradient";
 import { IconSymbol } from "@/components/IconSymbol";
 import { Button } from "@/components/button";
 import { colors, commonStyles } from "@/styles/commonStyles";
@@ -10,88 +10,113 @@ import { colors, commonStyles } from "@/styles/commonStyles";
 export default function HomeScreen() {
   const features = [
     {
-      title: "AI-Powered Planning",
-      description: "Smart itineraries optimized for AI career success",
-      icon: "🤖",
-      color: colors.primary,
+      title: "Smart Planning",
+      description: "Intelligent itineraries optimized for career success",
+      icon: "brain",
+      gradient: colors.gradients.primary,
     },
     {
-      title: "Recruiter Appeal",
+      title: "Professional Appeal",
       description: "Activities designed to impress hiring managers",
-      icon: "🎯",
-      color: colors.secondary,
+      icon: "target",
+      gradient: colors.gradients.secondary,
     },
     {
-      title: "Networking Focus",
-      description: "Connect with AI professionals worldwide",
-      icon: "🌐",
-      color: colors.accent,
+      title: "Global Networking",
+      description: "Connect with professionals worldwide",
+      icon: "globe.americas",
+      gradient: colors.gradients.accent,
     },
     {
-      title: "Interview Prep",
-      description: "Build compelling stories for behavioral interviews",
-      icon: "💼",
-      color: colors.success,
+      title: "Career Stories",
+      description: "Build compelling narratives for interviews",
+      icon: "briefcase",
+      gradient: colors.gradients.warm,
     }
   ];
 
-  const usps = [
+  const benefits = [
     "🚀 Career-focused travel planning",
-    "🎪 Interview story generation",
+    "📖 Interview story generation", 
     "🤝 Strategic networking opportunities",
     "📈 Skill-building integration",
     "💡 Innovation ecosystem immersion",
-    "⭐ Recruiter highlight creation"
+    "⭐ Professional highlight creation"
   ];
 
   return (
     <>
       <Stack.Screen
         options={{
-          title: "AI Trip Planner",
+          title: "TravelPro",
           headerStyle: { backgroundColor: colors.background },
           headerTintColor: colors.text,
+          headerShown: false,
         }}
       />
       <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
-        {/* Hero Section */}
-        <View style={styles.hero}>
-          <Text style={styles.heroIcon}>🤖✈️</Text>
-          <Text style={commonStyles.title}>AI Trip Planner</Text>
-          <Text style={commonStyles.textSecondary}>
-            The world&apos;s first AI-powered travel planner designed specifically 
-            for AI engineers seeking career advancement
-          </Text>
-          
-          <Button
-            onPress={() => router.push('/trip-planner')}
-            style={styles.ctaButton}
-          >
-            🚀 Start Planning Your Career Trip
-          </Button>
-        </View>
+        {/* Hero Section with Gradient */}
+        <LinearGradient
+          colors={colors.gradients.primary}
+          style={styles.hero}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+        >
+          <View style={styles.heroContent}>
+            <Text style={styles.heroEmoji}>✈️🌟</Text>
+            <Text style={styles.heroTitle}>TravelPro</Text>
+            <Text style={styles.heroSubtitle}>
+              The ultimate travel planner designed for ambitious professionals
+            </Text>
+            
+            <Button
+              onPress={() => router.push('/trip-planner')}
+              style={styles.ctaButton}
+              textStyle={styles.ctaButtonText}
+            >
+              🚀 Start Planning Your Journey
+            </Button>
+          </View>
+        </LinearGradient>
 
         {/* Features Grid */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>✨ Why Choose Our AI Planner?</Text>
+          <Text style={styles.sectionTitle}>✨ Why Choose TravelPro?</Text>
           <View style={styles.featuresGrid}>
             {features.map((feature, index) => (
-              <View key={index} style={styles.featureCard}>
-                <Text style={styles.featureIcon}>{feature.icon}</Text>
-                <Text style={styles.featureTitle}>{feature.title}</Text>
-                <Text style={styles.featureDescription}>{feature.description}</Text>
-              </View>
+              <LinearGradient
+                key={index}
+                colors={feature.gradient}
+                style={styles.featureCard}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+              >
+                <View style={styles.featureContent}>
+                  <IconSymbol 
+                    name={feature.icon as any} 
+                    color={colors.background} 
+                    size={32} 
+                    style={styles.featureIcon}
+                  />
+                  <Text style={styles.featureTitle}>{feature.title}</Text>
+                  <Text style={styles.featureDescription}>{feature.description}</Text>
+                </View>
+              </LinearGradient>
             ))}
           </View>
         </View>
 
-        {/* USPs Section */}
+        {/* Benefits Section */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>🎯 Unique Selling Points</Text>
-          <View style={styles.uspsList}>
-            {usps.map((usp, index) => (
-              <View key={index} style={styles.uspItem}>
-                <Text style={styles.uspText}>{usp}</Text>
+          <Text style={styles.sectionTitle}>🎯 Unique Benefits</Text>
+          <View style={styles.benefitsList}>
+            {benefits.map((benefit, index) => (
+              <View key={index} style={styles.benefitItem}>
+                <LinearGradient
+                  colors={colors.gradients.accent}
+                  style={styles.benefitDot}
+                />
+                <Text style={styles.benefitText}>{benefit}</Text>
               </View>
             ))}
           </View>
@@ -101,70 +126,79 @@ export default function HomeScreen() {
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>🔄 How It Works</Text>
           <View style={styles.stepsContainer}>
-            <View style={styles.step}>
-              <View style={styles.stepNumber}>
-                <Text style={styles.stepNumberText}>1</Text>
+            {[
+              {
+                number: "1",
+                title: "Input Your Preferences",
+                description: "Tell us your destination, dates, budget, and career focus",
+                color: colors.gradients.primary
+              },
+              {
+                number: "2", 
+                title: "Smart Analysis",
+                description: "Our system analyzes local opportunities, events, and networking possibilities",
+                color: colors.gradients.secondary
+              },
+              {
+                number: "3",
+                title: "Get Your Optimized Itinerary",
+                description: "Receive a detailed plan with professional highlights and networking opportunities",
+                color: colors.gradients.accent
+              }
+            ].map((step, index) => (
+              <View key={index} style={styles.step}>
+                <LinearGradient
+                  colors={step.color}
+                  style={styles.stepNumber}
+                >
+                  <Text style={styles.stepNumberText}>{step.number}</Text>
+                </LinearGradient>
+                <View style={styles.stepContent}>
+                  <Text style={styles.stepTitle}>{step.title}</Text>
+                  <Text style={styles.stepDescription}>{step.description}</Text>
+                </View>
               </View>
-              <View style={styles.stepContent}>
-                <Text style={styles.stepTitle}>Input Your Preferences</Text>
-                <Text style={styles.stepDescription}>
-                  Tell us your destination, dates, budget, and career focus
-                </Text>
-              </View>
-            </View>
-
-            <View style={styles.step}>
-              <View style={styles.stepNumber}>
-                <Text style={styles.stepNumberText}>2</Text>
-              </View>
-              <View style={styles.stepContent}>
-                <Text style={styles.stepTitle}>AI Analysis</Text>
-                <Text style={styles.stepDescription}>
-                  Our AI analyzes local AI hubs, networking events, and learning opportunities
-                </Text>
-              </View>
-            </View>
-
-            <View style={styles.step}>
-              <View style={styles.stepNumber}>
-                <Text style={styles.stepNumberText}>3</Text>
-              </View>
-              <View style={styles.stepContent}>
-                <Text style={styles.stepTitle}>Get Your Optimized Itinerary</Text>
-                <Text style={styles.stepDescription}>
-                  Receive a detailed plan with recruiter highlights and networking opportunities
-                </Text>
-              </View>
-            </View>
+            ))}
           </View>
         </View>
 
-        {/* Demo Section */}
+        {/* Testimonial Section */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>🎪 Perfect for AI Engineers</Text>
-          <View style={styles.demoCard}>
-            <Text style={styles.demoTitle}>
+          <Text style={styles.sectionTitle}>💼 Perfect for Professionals</Text>
+          <LinearGradient
+            colors={colors.gradients.cool}
+            style={styles.testimonialCard}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+          >
+            <Text style={styles.testimonialQuote}>
               &quot;I used this planner for my San Francisco trip and landed 3 interviews!&quot;
             </Text>
-            <Text style={styles.demoDescription}>
-              The AI suggested visiting Google AI, attending ML meetups, and exploring 
-              the innovation district. My recruiter was impressed by my proactive 
-              approach to understanding the AI ecosystem.
+            <Text style={styles.testimonialDescription}>
+              The system suggested visiting tech campuses, attending professional meetups, and exploring 
+              the innovation district. My interviewer was impressed by my proactive 
+              approach to understanding the industry ecosystem.
             </Text>
-            <Text style={styles.demoAuthor}>- Future AI Engineer (You!)</Text>
-          </View>
+            <Text style={styles.testimonialAuthor}>- Future Professional (You!)</Text>
+          </LinearGradient>
         </View>
 
         {/* CTA Section */}
-        <View style={styles.ctaSection}>
-          <Text style={styles.ctaTitle}>Ready to Impress Recruiters?</Text>
+        <LinearGradient
+          colors={colors.gradients.warm}
+          style={styles.ctaSection}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+        >
+          <Text style={styles.ctaTitle}>Ready to Elevate Your Career?</Text>
           <Text style={styles.ctaDescription}>
-            Create your AI-optimized travel itinerary and stand out from other candidates
+            Create your professionally-optimized travel itinerary and stand out from other candidates
           </Text>
           
           <Button
             onPress={() => router.push('/trip-planner')}
-            style={styles.ctaButton}
+            style={styles.ctaButtonSecondary}
+            textStyle={styles.ctaButtonSecondaryText}
           >
             🎯 Plan My Career-Boosting Trip
           </Button>
@@ -175,7 +209,7 @@ export default function HomeScreen() {
           >
             <Text style={styles.demoLinkText}>👀 View Sample Itinerary</Text>
           </Pressable>
-        </View>
+        </LinearGradient>
       </ScrollView>
     </>
   );
@@ -187,161 +221,217 @@ const styles = StyleSheet.create({
     backgroundColor: colors.background,
   },
   hero: {
-    padding: 20,
+    paddingVertical: 60,
+    paddingHorizontal: 20,
     alignItems: 'center',
-    backgroundColor: colors.backgroundAlt,
   },
-  heroIcon: {
-    fontSize: 48,
+  heroContent: {
+    alignItems: 'center',
+    maxWidth: 400,
+  },
+  heroEmoji: {
+    fontSize: 64,
     marginBottom: 16,
+  },
+  heroTitle: {
+    fontSize: 42,
+    fontFamily: 'Poppins_700Bold',
+    color: colors.background,
+    marginBottom: 12,
+    textAlign: 'center',
+  },
+  heroSubtitle: {
+    fontSize: 18,
+    fontFamily: 'Nunito_400Regular',
+    color: colors.background,
+    textAlign: 'center',
+    marginBottom: 32,
+    lineHeight: 26,
+    opacity: 0.9,
   },
   ctaButton: {
     width: '100%',
-    marginTop: 20,
+    backgroundColor: colors.background,
+    paddingVertical: 16,
+    borderRadius: 16,
+  },
+  ctaButtonText: {
+    color: colors.primary,
+    fontSize: 18,
+    fontFamily: 'Poppins_600SemiBold',
   },
   section: {
     padding: 20,
   },
   sectionTitle: {
-    fontSize: 20,
-    fontWeight: '600',
+    fontSize: 28,
+    fontFamily: 'Poppins_700Bold',
     color: colors.text,
-    marginBottom: 16,
+    marginBottom: 24,
     textAlign: 'center',
   },
   featuresGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 12,
+    gap: 16,
     justifyContent: 'space-between',
   },
   featureCard: {
-    backgroundColor: colors.card,
-    borderRadius: 12,
-    padding: 16,
+    borderRadius: 20,
     width: '48%',
+    minHeight: 160,
+    padding: 2,
+  },
+  featureContent: {
+    backgroundColor: colors.background,
+    borderRadius: 18,
+    padding: 20,
     alignItems: 'center',
-    borderWidth: 1,
-    borderColor: colors.border,
+    height: '100%',
+    justifyContent: 'center',
   },
   featureIcon: {
-    fontSize: 32,
-    marginBottom: 8,
+    marginBottom: 12,
   },
   featureTitle: {
-    fontSize: 14,
-    fontWeight: '600',
+    fontSize: 16,
+    fontFamily: 'Poppins_600SemiBold',
     color: colors.text,
     textAlign: 'center',
-    marginBottom: 4,
+    marginBottom: 8,
   },
   featureDescription: {
-    fontSize: 12,
+    fontSize: 13,
+    fontFamily: 'Nunito_400Regular',
     color: colors.textSecondary,
     textAlign: 'center',
-    lineHeight: 16,
+    lineHeight: 18,
   },
-  uspsList: {
-    gap: 8,
+  benefitsList: {
+    gap: 16,
   },
-  uspItem: {
-    backgroundColor: colors.card,
-    borderRadius: 8,
-    padding: 12,
-    borderLeftWidth: 4,
-    borderLeftColor: colors.primary,
+  benefitItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: colors.cardAlt,
+    borderRadius: 16,
+    padding: 16,
   },
-  uspText: {
-    fontSize: 14,
+  benefitDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    marginRight: 16,
+  },
+  benefitText: {
+    fontSize: 16,
+    fontFamily: 'Nunito_500Medium',
     color: colors.text,
-    lineHeight: 20,
+    flex: 1,
+    lineHeight: 22,
   },
   stepsContainer: {
-    gap: 16,
+    gap: 24,
   },
   step: {
     flexDirection: 'row',
     alignItems: 'flex-start',
   },
   stepNumber: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    backgroundColor: colors.primary,
+    width: 48,
+    height: 48,
+    borderRadius: 24,
     justifyContent: 'center',
     alignItems: 'center',
-    marginRight: 12,
+    marginRight: 16,
   },
   stepNumberText: {
-    fontSize: 16,
-    fontWeight: '700',
+    fontSize: 20,
+    fontFamily: 'Poppins_700Bold',
     color: colors.background,
   },
   stepContent: {
     flex: 1,
+    paddingTop: 4,
   },
   stepTitle: {
-    fontSize: 16,
-    fontWeight: '600',
+    fontSize: 18,
+    fontFamily: 'Poppins_600SemiBold',
     color: colors.text,
-    marginBottom: 4,
+    marginBottom: 8,
   },
   stepDescription: {
-    fontSize: 14,
+    fontSize: 15,
+    fontFamily: 'Nunito_400Regular',
     color: colors.textSecondary,
-    lineHeight: 20,
+    lineHeight: 22,
   },
-  demoCard: {
-    backgroundColor: colors.card,
-    borderRadius: 12,
-    padding: 20,
-    borderWidth: 1,
-    borderColor: colors.border,
+  testimonialCard: {
+    borderRadius: 20,
+    padding: 24,
   },
-  demoTitle: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: colors.text,
-    marginBottom: 12,
-    lineHeight: 24,
+  testimonialQuote: {
+    fontSize: 20,
+    fontFamily: 'Poppins_600SemiBold',
+    color: colors.background,
+    marginBottom: 16,
+    lineHeight: 28,
   },
-  demoDescription: {
+  testimonialDescription: {
+    fontSize: 15,
+    fontFamily: 'Nunito_400Regular',
+    color: colors.background,
+    lineHeight: 22,
+    marginBottom: 16,
+    opacity: 0.9,
+  },
+  testimonialAuthor: {
     fontSize: 14,
-    color: colors.textSecondary,
-    lineHeight: 20,
-    marginBottom: 12,
-  },
-  demoAuthor: {
-    fontSize: 12,
-    color: colors.primary,
+    fontFamily: 'Poppins_500Medium',
+    color: colors.background,
     fontStyle: 'italic',
+    opacity: 0.8,
   },
   ctaSection: {
-    padding: 20,
+    padding: 32,
     alignItems: 'center',
-    backgroundColor: colors.backgroundAlt,
   },
   ctaTitle: {
-    fontSize: 24,
-    fontWeight: '700',
-    color: colors.text,
+    fontSize: 32,
+    fontFamily: 'Poppins_700Bold',
+    color: colors.background,
     textAlign: 'center',
-    marginBottom: 8,
+    marginBottom: 12,
   },
   ctaDescription: {
     fontSize: 16,
-    color: colors.textSecondary,
+    fontFamily: 'Nunito_400Regular',
+    color: colors.background,
     textAlign: 'center',
-    marginBottom: 20,
+    marginBottom: 32,
     lineHeight: 24,
+    opacity: 0.9,
+  },
+  ctaButtonSecondary: {
+    width: '100%',
+    backgroundColor: colors.background,
+    paddingVertical: 16,
+    borderRadius: 16,
+    marginBottom: 16,
+  },
+  ctaButtonSecondaryText: {
+    color: colors.tertiary,
+    fontSize: 18,
+    fontFamily: 'Poppins_600SemiBold',
   },
   demoLink: {
-    marginTop: 12,
-    padding: 8,
+    padding: 12,
   },
   demoLinkText: {
-    fontSize: 14,
-    color: colors.primary,
+    fontSize: 16,
+    fontFamily: 'Poppins_500Medium',
+    color: colors.background,
     textAlign: 'center',
+    opacity: 0.9,
   },
 });

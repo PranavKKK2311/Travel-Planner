@@ -12,7 +12,25 @@ import { useEffect } from "react";
 import { StatusBar } from "expo-status-bar";
 import { useColorScheme } from "react-native";
 import * as SplashScreen from "expo-splash-screen";
-import { useFonts, Inter_400Regular, Inter_500Medium, Inter_600SemiBold, Inter_700Bold } from "@expo-google-fonts/inter";
+import { 
+  useFonts, 
+  Inter_400Regular, 
+  Inter_500Medium, 
+  Inter_600SemiBold, 
+  Inter_700Bold 
+} from "@expo-google-fonts/inter";
+import {
+  Poppins_400Regular,
+  Poppins_500Medium,
+  Poppins_600SemiBold,
+  Poppins_700Bold
+} from "@expo-google-fonts/poppins";
+import {
+  Nunito_400Regular,
+  Nunito_500Medium,
+  Nunito_600SemiBold,
+  Nunito_700Bold
+} from "@expo-google-fonts/nunito";
 import { Button } from "@/components/button";
 import { Stack, router } from "expo-router";
 import { colors } from "@/styles/commonStyles";
@@ -40,6 +58,14 @@ export default function RootLayout() {
     Inter_500Medium,
     Inter_600SemiBold,
     Inter_700Bold,
+    Poppins_400Regular,
+    Poppins_500Medium,
+    Poppins_600SemiBold,
+    Poppins_700Bold,
+    Nunito_400Regular,
+    Nunito_500Medium,
+    Nunito_600SemiBold,
+    Nunito_700Bold,
   });
 
   useEffect(() => {

@@ -2,19 +2,34 @@
 import { StyleSheet, ViewStyle, TextStyle } from 'react-native';
 
 export const colors = {
-  primary: '#007AFF',      // iOS Blue
-  secondary: '#5856D6',    // iOS Purple
-  accent: '#34C759',       // iOS Green
-  background: '#FFFFFF',   // White background for light theme
-  backgroundAlt: '#F2F2F7', // Light gray background
-  text: '#000000',         // Black text for light theme
-  textSecondary: '#8E8E93', // Gray text
-  grey: '#C7C7CC',         // Light gray
+  primary: '#6366F1',      // Modern Indigo
+  secondary: '#EC4899',    // Vibrant Pink
+  accent: '#10B981',       // Emerald Green
+  tertiary: '#F59E0B',     // Amber
+  quaternary: '#8B5CF6',   // Purple
+  background: '#FFFFFF',   // White background
+  backgroundAlt: '#F8FAFC', // Very light blue-gray
+  backgroundGradient: ['#6366F1', '#8B5CF6'], // Primary to Purple gradient
+  text: '#1F2937',         // Dark gray text
+  textSecondary: '#6B7280', // Medium gray text
+  textLight: '#9CA3AF',    // Light gray text
+  grey: '#E5E7EB',         // Light gray
   card: '#FFFFFF',         // White card background
-  border: '#E5E5EA',       // Light border
-  success: '#34C759',      // Green
-  warning: '#FF9500',      // Orange
-  error: '#FF3B30',        // Red
+  cardAlt: '#F9FAFB',      // Very light gray card
+  border: '#E5E7EB',       // Light border
+  borderLight: '#F3F4F6',  // Very light border
+  success: '#10B981',      // Emerald
+  warning: '#F59E0B',      // Amber
+  error: '#EF4444',        // Red
+  info: '#3B82F6',         // Blue
+  // Gradient colors for cards and backgrounds
+  gradients: {
+    primary: ['#6366F1', '#8B5CF6'],
+    secondary: ['#EC4899', '#F97316'],
+    accent: ['#10B981', '#059669'],
+    warm: ['#F59E0B', '#EF4444'],
+    cool: ['#3B82F6', '#6366F1'],
+  }
 };
 
 export const buttonStyles = StyleSheet.create({

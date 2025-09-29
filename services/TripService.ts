@@ -1,10 +1,10 @@
 
-import { TripPreferences, TripItinerary, Activity, DayItinerary, AIInsight } from '@/types/TripTypes';
+import { TripPreferences, TripItinerary, Activity, DayItinerary, SmartInsight } from '@/types/TripTypes';
 
-export class AITripService {
-  private static aiCompanies = [
-    'Google AI', 'OpenAI', 'Anthropic', 'DeepMind', 'Meta AI', 'Microsoft Research',
-    'NVIDIA', 'Tesla AI', 'Uber AI', 'Airbnb AI', 'Netflix ML', 'Amazon AI'
+export class TripService {
+  private static techCompanies = [
+    'Google', 'Microsoft', 'Apple', 'Meta', 'Amazon', 'Netflix',
+    'NVIDIA', 'Tesla', 'Uber', 'Airbnb', 'Spotify', 'Adobe'
   ];
 
   private static techHubs = [
@@ -12,17 +12,17 @@ export class AITripService {
     'Berlin', 'Tel Aviv', 'Singapore', 'Toronto', 'Vancouver', 'Amsterdam'
   ];
 
-  private static aiEvents = [
-    'AI Conference', 'Machine Learning Meetup', 'Tech Networking Event',
-    'Startup Pitch Night', 'AI Research Symposium', 'Data Science Workshop'
+  private static professionalEvents = [
+    'Tech Conference', 'Professional Meetup', 'Industry Networking Event',
+    'Startup Pitch Night', 'Innovation Symposium', 'Skills Workshop'
   ];
 
   static generateItinerary(preferences: TripPreferences): TripItinerary {
-    console.log('Generating AI-optimized itinerary for:', preferences.destination);
+    console.log('Generating personalized itinerary for:', preferences.destination);
     
     const days = this.generateDays(preferences);
     const totalCost = days.reduce((sum, day) => sum + day.totalCost, 0);
-    const overallAiScore = days.reduce((sum, day) => sum + day.aiScore, 0) / days.length;
+    const overallScore = days.reduce((sum, day) => sum + day.experienceScore, 0) / days.length;
     
     return {
       id: `trip_${Date.now()}`,
@@ -31,8 +31,8 @@ export class AITripService {
       endDate: preferences.endDate,
       days,
       totalCost,
-      overallAiScore,
-      recruiterHighlights: this.generateRecruiterHighlights(preferences, days),
+      overallScore,
+      careerHighlights: this.generateCareerHighlights(preferences, days),
       uniqueSellingPoints: this.generateUSPs(preferences, days)
     };
   }
@@ -53,13 +53,13 @@ export class AITripService {
       
       const activities = this.generateActivitiesForDay(preferences, i, totalDays, isInterviewDay);
       const totalCost = activities.reduce((sum, activity) => sum + activity.cost, 0);
-      const aiScore = activities.reduce((sum, activity) => sum + (activity.aiRelevance || 0), 0) / activities.length;
+      const experienceScore = activities.reduce((sum, activity) => sum + (activity.careerRelevance || 0), 0) / activities.length;
       
       days.push({
         date: currentDate.toISOString().split('T')[0],
         activities,
         totalCost,
-        aiScore
+        experienceScore
       });
     }
     
@@ -84,20 +84,20 @@ export class AITripService {
         duration: 4,
         cost: 0,
         category: 'interview-prep',
-        aiRelevance: 10,
-        recruiterImpact: 'Shows dedication by traveling for the opportunity'
+        careerRelevance: 10,
+        professionalImpact: 'Shows dedication by traveling for the opportunity'
       });
       
       activities.push({
         id: `networking_${dayIndex}`,
         name: 'Post-Interview Networking',
-        description: 'Connect with local AI professionals and potential colleagues',
+        description: 'Connect with local professionals and potential colleagues',
         location: 'Local Tech Hub',
         duration: 2,
         cost: 50,
         category: 'networking',
-        aiRelevance: 9,
-        recruiterImpact: 'Demonstrates proactive networking skills'
+        careerRelevance: 9,
+        professionalImpact: 'Demonstrates proactive networking skills'
       });
     } else {
       // Regular day activities based on preferences
@@ -116,9 +116,9 @@ export class AITripService {
         ));
       }
       
-      // Add AI-relevant activities
-      const aiActivity = this.generateAIActivity(preferences, dayIndex);
-      activities.push(aiActivity);
+      // Add career-relevant activities
+      const careerActivity = this.generateCareerActivity(preferences, dayIndex);
+      activities.push(careerActivity);
       
       // Add learning activity
       const learningActivity = this.generateLearningActivity(preferences, dayIndex);
@@ -134,47 +134,47 @@ export class AITripService {
     return activities;
   }
 
-  private static generateAIActivity(preferences: TripPreferences, dayIndex: number): Activity {
-    const aiLocations = [
-      'AI Research Lab Tour',
+  private static generateCareerActivity(preferences: TripPreferences, dayIndex: number): Activity {
+    const careerLocations = [
       'Tech Company Campus Visit',
       'Innovation District Exploration',
-      'AI Startup Hub Visit',
-      'University AI Department Tour'
+      'Startup Hub Visit',
+      'University Tech Department Tour',
+      'Industry Research Center'
     ];
     
-    const location = aiLocations[dayIndex % aiLocations.length];
-    const company = this.aiCompanies[Math.floor(Math.random() * this.aiCompanies.length)];
+    const location = careerLocations[dayIndex % careerLocations.length];
+    const company = this.techCompanies[Math.floor(Math.random() * this.techCompanies.length)];
     
     return this.createActivity(
-      `ai_${dayIndex}`,
+      `career_${dayIndex}`,
       `${location} - ${company} Area`,
-      `Explore the ${company} ecosystem and learn about their AI initiatives`,
+      `Explore the ${company} ecosystem and learn about their innovative initiatives`,
       location,
       3,
       preferences.budget > 1000 ? 100 : 50,
       'learning',
       9,
-      `Shows genuine interest in AI industry leaders like ${company}`
+      `Shows genuine interest in industry leaders like ${company}`
     );
   }
 
   private static generateLearningActivity(preferences: TripPreferences, dayIndex: number): Activity {
     const learningActivities = [
-      'AI Workshop Attendance',
-      'Machine Learning Bootcamp',
-      'Data Science Seminar',
+      'Professional Workshop Attendance',
+      'Skills Development Bootcamp',
+      'Industry Seminar',
       'Tech Talk at Local University',
-      'Open Source Contribution Session'
+      'Innovation Lab Session'
     ];
     
     const activity = learningActivities[dayIndex % learningActivities.length];
-    const event = this.aiEvents[Math.floor(Math.random() * this.aiEvents.length)];
+    const event = this.professionalEvents[Math.floor(Math.random() * this.professionalEvents.length)];
     
     return this.createActivity(
       `learning_${dayIndex}`,
       `${activity} - ${event}`,
-      'Enhance technical skills and stay updated with latest AI trends',
+      'Enhance technical skills and stay updated with latest industry trends',
       'Tech Hub',
       4,
       preferences.budget > 1000 ? 150 : 75,
@@ -186,8 +186,8 @@ export class AITripService {
 
   private static generateNetworkingActivity(preferences: TripPreferences, dayIndex: number): Activity {
     const networkingEvents = [
-      'AI Professionals Meetup',
-      'Tech Startup Networking Event',
+      'Tech Professionals Meetup',
+      'Startup Networking Event',
       'Industry Conference Networking',
       'Alumni Tech Gathering',
       'Innovation Hub Social Event'
@@ -198,7 +198,7 @@ export class AITripService {
     return this.createActivity(
       `networking_${dayIndex}`,
       event,
-      'Connect with AI professionals and expand your network',
+      'Connect with industry professionals and expand your network',
       'Tech District',
       2,
       40,
@@ -216,8 +216,8 @@ export class AITripService {
     duration: number,
     cost: number,
     category: Activity['category'],
-    aiRelevance: number,
-    recruiterImpact: string
+    careerRelevance: number,
+    professionalImpact: string
   ): Activity {
     return {
       id,
@@ -227,16 +227,16 @@ export class AITripService {
       duration,
       cost,
       category,
-      aiRelevance,
-      recruiterImpact
+      careerRelevance,
+      professionalImpact
     };
   }
 
-  private static generateRecruiterHighlights(preferences: TripPreferences, days: DayItinerary[]): string[] {
+  private static generateCareerHighlights(preferences: TripPreferences, days: DayItinerary[]): string[] {
     const highlights = [
       'Proactive approach to career development through strategic travel',
-      'Strong networking skills demonstrated by connecting with AI professionals',
-      'Commitment to continuous learning in AI and machine learning',
+      'Strong networking skills demonstrated by connecting with industry professionals',
+      'Commitment to continuous learning and professional development',
       'Cultural adaptability and global mindset',
       'Strategic thinking in combining travel with career advancement'
     ];
@@ -245,12 +245,12 @@ export class AITripService {
       highlights.unshift('Dedication shown by traveling specifically for interview opportunity');
     }
     
-    const totalAIActivities = days.reduce((sum, day) => 
+    const totalProfessionalActivities = days.reduce((sum, day) => 
       sum + day.activities.filter(a => a.category === 'learning' || a.category === 'networking').length, 0
     );
     
-    if (totalAIActivities > 5) {
-      highlights.push('Extensive engagement with AI community and learning opportunities');
+    if (totalProfessionalActivities > 5) {
+      highlights.push('Extensive engagement with professional community and learning opportunities');
     }
     
     return highlights.slice(0, 5);
@@ -258,17 +258,17 @@ export class AITripService {
 
   private static generateUSPs(preferences: TripPreferences, days: DayItinerary[]): string[] {
     return [
-      '🤖 AI-Optimized Itinerary: Every activity strategically chosen to enhance AI career prospects',
-      '🎯 Recruiter-Focused Planning: Activities designed to create compelling interview stories',
-      '🌐 Global AI Network Building: Connect with professionals across international AI hubs',
-      '📈 Skill-Building Integration: Combine travel with hands-on AI learning experiences',
-      '💡 Innovation Immersion: Deep dive into AI ecosystems and startup cultures',
-      '🎪 Interview Story Generator: Create memorable experiences that stand out in interviews'
+      '🎯 Career-Optimized Itinerary: Every activity strategically chosen to enhance your professional prospects',
+      '💼 Professional-Focused Planning: Activities designed to create compelling interview stories',
+      '🌐 Global Network Building: Connect with professionals across international tech hubs',
+      '📈 Skill-Building Integration: Combine travel with hands-on learning experiences',
+      '💡 Innovation Immersion: Deep dive into tech ecosystems and startup cultures',
+      '⭐ Experience Generator: Create memorable experiences that stand out in interviews'
     ];
   }
 
-  static generateAIInsights(itinerary: TripItinerary): AIInsight[] {
-    const insights: AIInsight[] = [];
+  static generateSmartInsights(itinerary: TripItinerary): SmartInsight[] {
+    const insights: SmartInsight[] = [];
     
     // Networking insight
     const networkingActivities = itinerary.days.reduce((sum, day) => 
@@ -279,7 +279,7 @@ export class AITripService {
       insights.push({
         type: 'networking',
         title: 'Strategic Networking Opportunities',
-        description: `${networkingActivities} networking events planned to expand your AI professional network`,
+        description: `${networkingActivities} networking events planned to expand your professional network`,
         impact: 'Builds valuable connections that can lead to job referrals and industry insights'
       });
     }
@@ -293,8 +293,8 @@ export class AITripService {
       insights.push({
         type: 'learning',
         title: 'Continuous Learning Focus',
-        description: `${learningActivities} learning activities to enhance your AI expertise`,
-        impact: 'Demonstrates commitment to staying current with AI trends and technologies'
+        description: `${learningActivities} learning activities to enhance your expertise`,
+        impact: 'Demonstrates commitment to staying current with industry trends and technologies'
       });
     }
     

@@ -11,11 +11,12 @@ import {
   Pressable
 } from 'react-native';
 import { Stack, router } from 'expo-router';
+import { LinearGradient } from 'expo-linear-gradient';
 import { Button } from '@/components/button';
 import { IconSymbol } from '@/components/IconSymbol';
 import { colors, commonStyles } from '@/styles/commonStyles';
 import { TripPreferences } from '@/types/TripTypes';
-import { AITripService } from '@/services/AITripService';
+import { TripService } from '@/services/TripService';
 
 export default function TripPlannerScreen() {
   const [preferences, setPreferences] = useState<TripPreferences>({
@@ -29,28 +30,28 @@ export default function TripPlannerScreen() {
     hasJobInterview: false,
     interviewDate: '',
     interviewLocation: '',
-    careerFocus: 'ai-engineering'
+    careerFocus: 'engineering'
   });
 
   const [isGenerating, setIsGenerating] = useState(false);
 
   const interests = [
-    'Machine Learning', 'Deep Learning', 'Computer Vision', 'NLP',
-    'Robotics', 'Data Science', 'Startups', 'Research', 'Networking'
+    'Technology', 'Innovation', 'Startups', 'Networking', 
+    'Learning', 'Research', 'Design', 'Business', 'Leadership'
   ];
 
   const travelStyles = [
-    { key: 'budget', label: 'Budget-Friendly', icon: '💰' },
-    { key: 'mid-range', label: 'Mid-Range', icon: '🏨' },
-    { key: 'luxury', label: 'Luxury', icon: '✨' }
+    { key: 'budget', label: 'Budget-Friendly', icon: '💰', gradient: colors.gradients.accent },
+    { key: 'mid-range', label: 'Mid-Range', icon: '🏨', gradient: colors.gradients.primary },
+    { key: 'luxury', label: 'Luxury', icon: '✨', gradient: colors.gradients.secondary }
   ] as const;
 
   const careerFocuses = [
-    { key: 'ai-engineering', label: 'AI Engineering', icon: '🤖' },
-    { key: 'tech', label: 'General Tech', icon: '💻' },
-    { key: 'startup', label: 'Startup', icon: '🚀' },
-    { key: 'research', label: 'Research', icon: '🔬' },
-    { key: 'other', label: 'Other', icon: '🎯' }
+    { key: 'engineering', label: 'Engineering', icon: '⚙️', gradient: colors.gradients.primary },
+    { key: 'tech', label: 'General Tech', icon: '💻', gradient: colors.gradients.cool },
+    { key: 'startup', label: 'Startup', icon: '🚀', gradient: colors.gradients.warm },
+    { key: 'research', label: 'Research', icon: '🔬', gradient: colors.gradients.accent },
+    { key: 'other', label: 'Other', icon: '🎯', gradient: colors.gradients.secondary }
   ] as const;
 
   const handleInterestToggle = (interest: string) => {
@@ -77,10 +78,10 @@ export default function TripPlannerScreen() {
     console.log('Generating itinerary with preferences:', preferences);
 
     try {
-      // Simulate AI processing time
+      // Simulate processing time
       await new Promise(resolve => setTimeout(resolve, 2000));
       
-      const itinerary = AITripService.generateItinerary(preferences);
+      const itinerary = TripService.generateItinerary(preferences);
       console.log('Generated itinerary:', itinerary);
       
       // Navigate to results screen with the generated itinerary
@@ -100,37 +101,49 @@ export default function TripPlannerScreen() {
     <>
       <Stack.Screen
         options={{
-          title: 'AI Trip Planner',
+          title: 'Plan Your Trip',
           headerStyle: { backgroundColor: colors.background },
           headerTintColor: colors.text,
         }}
       />
       <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
-        <View style={styles.header}>
-          <Text style={commonStyles.title}>🤖 AI-Powered Trip Planner</Text>
-          <Text style={commonStyles.textSecondary}>
-            Plan your perfect trip optimized for AI career success
+        {/* Header */}
+        <LinearGradient
+          colors={colors.gradients.primary}
+          style={styles.header}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+        >
+          <Text style={styles.headerTitle}>🌟 Smart Trip Planner</Text>
+          <Text style={styles.headerSubtitle}>
+            Plan your perfect trip optimized for career success
           </Text>
-        </View>
+        </LinearGradient>
 
+        {/* Destination */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>📍 Destination</Text>
-          <TextInput
-            style={commonStyles.input}
-            placeholder="Where are you traveling? (e.g., San Francisco, London)"
-            value={preferences.destination}
-            onChangeText={(text) => setPreferences(prev => ({ ...prev, destination: text }))}
-          />
+          <View style={styles.inputContainer}>
+            <TextInput
+              style={styles.input}
+              placeholder="Where are you traveling? (e.g., San Francisco, London)"
+              placeholderTextColor={colors.textLight}
+              value={preferences.destination}
+              onChangeText={(text) => setPreferences(prev => ({ ...prev, destination: text }))}
+            />
+          </View>
         </View>
 
+        {/* Travel Dates */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>📅 Travel Dates</Text>
           <View style={styles.dateRow}>
             <View style={styles.dateInput}>
               <Text style={styles.inputLabel}>Start Date</Text>
               <TextInput
-                style={commonStyles.input}
+                style={styles.input}
                 placeholder="YYYY-MM-DD"
+                placeholderTextColor={colors.textLight}
                 value={preferences.startDate}
                 onChangeText={(text) => setPreferences(prev => ({ ...prev, startDate: text }))}
               />
@@ -138,8 +151,9 @@ export default function TripPlannerScreen() {
             <View style={styles.dateInput}>
               <Text style={styles.inputLabel}>End Date</Text>
               <TextInput
-                style={commonStyles.input}
+                style={styles.input}
                 placeholder="YYYY-MM-DD"
+                placeholderTextColor={colors.textLight}
                 value={preferences.endDate}
                 onChangeText={(text) => setPreferences(prev => ({ ...prev, endDate: text }))}
               />
@@ -147,30 +161,35 @@ export default function TripPlannerScreen() {
           </View>
         </View>
 
+        {/* Career Focus */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>💼 Career Focus</Text>
           <View style={styles.optionsGrid}>
             {careerFocuses.map((focus) => (
               <Pressable
                 key={focus.key}
-                style={[
-                  styles.optionCard,
-                  preferences.careerFocus === focus.key && styles.selectedOption
-                ]}
                 onPress={() => setPreferences(prev => ({ ...prev, careerFocus: focus.key }))}
               >
-                <Text style={styles.optionIcon}>{focus.icon}</Text>
-                <Text style={[
-                  styles.optionText,
-                  preferences.careerFocus === focus.key && styles.selectedOptionText
-                ]}>
-                  {focus.label}
-                </Text>
+                <LinearGradient
+                  colors={preferences.careerFocus === focus.key ? focus.gradient : [colors.cardAlt, colors.cardAlt]}
+                  style={[styles.optionCard, preferences.careerFocus === focus.key && styles.selectedOption]}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 1 }}
+                >
+                  <Text style={styles.optionIcon}>{focus.icon}</Text>
+                  <Text style={[
+                    styles.optionText,
+                    preferences.careerFocus === focus.key && styles.selectedOptionText
+                  ]}>
+                    {focus.label}
+                  </Text>
+                </LinearGradient>
               </Pressable>
             ))}
           </View>
         </View>
 
+        {/* Interests */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>🎯 Interests</Text>
           <View style={styles.interestsGrid}>
@@ -183,79 +202,105 @@ export default function TripPlannerScreen() {
                 ]}
                 onPress={() => handleInterestToggle(interest)}
               >
-                <Text style={[
-                  styles.interestText,
-                  preferences.interests.includes(interest) && styles.selectedInterestText
-                ]}>
-                  {interest}
-                </Text>
+                <LinearGradient
+                  colors={preferences.interests.includes(interest) ? colors.gradients.accent : [colors.cardAlt, colors.cardAlt]}
+                  style={styles.interestGradient}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 1 }}
+                >
+                  <Text style={[
+                    styles.interestText,
+                    preferences.interests.includes(interest) && styles.selectedInterestText
+                  ]}>
+                    {interest}
+                  </Text>
+                </LinearGradient>
               </Pressable>
             ))}
           </View>
         </View>
 
+        {/* Travel Style */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>🏨 Travel Style</Text>
           <View style={styles.optionsGrid}>
             {travelStyles.map((style) => (
               <Pressable
                 key={style.key}
-                style={[
-                  styles.optionCard,
-                  preferences.travelStyle === style.key && styles.selectedOption
-                ]}
                 onPress={() => setPreferences(prev => ({ ...prev, travelStyle: style.key }))}
               >
-                <Text style={styles.optionIcon}>{style.icon}</Text>
-                <Text style={[
-                  styles.optionText,
-                  preferences.travelStyle === style.key && styles.selectedOptionText
-                ]}>
-                  {style.label}
-                </Text>
+                <LinearGradient
+                  colors={preferences.travelStyle === style.key ? style.gradient : [colors.cardAlt, colors.cardAlt]}
+                  style={[styles.optionCard, preferences.travelStyle === style.key && styles.selectedOption]}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 1 }}
+                >
+                  <Text style={styles.optionIcon}>{style.icon}</Text>
+                  <Text style={[
+                    styles.optionText,
+                    preferences.travelStyle === style.key && styles.selectedOptionText
+                  ]}>
+                    {style.label}
+                  </Text>
+                </LinearGradient>
               </Pressable>
             ))}
           </View>
         </View>
 
+        {/* Budget */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>💰 Budget</Text>
-          <TextInput
-            style={commonStyles.input}
-            placeholder="Total budget in USD"
-            value={preferences.budget.toString()}
-            onChangeText={(text) => setPreferences(prev => ({ 
-              ...prev, 
-              budget: parseInt(text) || 0 
-            }))}
-            keyboardType="numeric"
-          />
+          <View style={styles.inputContainer}>
+            <TextInput
+              style={styles.input}
+              placeholder="Total budget in USD"
+              placeholderTextColor={colors.textLight}
+              value={preferences.budget.toString()}
+              onChangeText={(text) => setPreferences(prev => ({ 
+                ...prev, 
+                budget: parseInt(text) || 0 
+              }))}
+              keyboardType="numeric"
+            />
+          </View>
         </View>
 
+        {/* Job Interview Toggle */}
         <View style={styles.section}>
-          <View style={styles.switchRow}>
-            <View>
-              <Text style={styles.sectionTitle}>🎤 Job Interview</Text>
-              <Text style={commonStyles.textSecondary}>
-                Do you have a job interview during this trip?
-              </Text>
-            </View>
-            <Switch
-              value={preferences.hasJobInterview}
-              onValueChange={(value) => setPreferences(prev => ({ 
-                ...prev, 
-                hasJobInterview: value 
-              }))}
-              trackColor={{ false: colors.grey, true: colors.primary }}
-              thumbColor={colors.background}
-            />
+          <View style={styles.switchContainer}>
+            <LinearGradient
+              colors={colors.gradients.cool}
+              style={styles.switchCard}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+            >
+              <View style={styles.switchContent}>
+                <View style={styles.switchInfo}>
+                  <Text style={styles.switchTitle}>🎤 Job Interview</Text>
+                  <Text style={styles.switchDescription}>
+                    Do you have a job interview during this trip?
+                  </Text>
+                </View>
+                <Switch
+                  value={preferences.hasJobInterview}
+                  onValueChange={(value) => setPreferences(prev => ({ 
+                    ...prev, 
+                    hasJobInterview: value 
+                  }))}
+                  trackColor={{ false: colors.grey, true: colors.background }}
+                  thumbColor={preferences.hasJobInterview ? colors.primary : colors.background}
+                />
+              </View>
+            </LinearGradient>
           </View>
 
           {preferences.hasJobInterview && (
             <View style={styles.interviewDetails}>
               <TextInput
-                style={commonStyles.input}
+                style={styles.input}
                 placeholder="Interview Date (YYYY-MM-DD)"
+                placeholderTextColor={colors.textLight}
                 value={preferences.interviewDate}
                 onChangeText={(text) => setPreferences(prev => ({ 
                   ...prev, 
@@ -263,8 +308,9 @@ export default function TripPlannerScreen() {
                 }))}
               />
               <TextInput
-                style={commonStyles.input}
+                style={styles.input}
                 placeholder="Interview Location/Company"
+                placeholderTextColor={colors.textLight}
                 value={preferences.interviewLocation}
                 onChangeText={(text) => setPreferences(prev => ({ 
                   ...prev, 
@@ -275,19 +321,28 @@ export default function TripPlannerScreen() {
           )}
         </View>
 
+        {/* Generate Button */}
         <View style={styles.generateSection}>
-          <Button
-            onPress={handleGenerateItinerary}
-            loading={isGenerating}
-            disabled={isGenerating}
+          <LinearGradient
+            colors={colors.gradients.warm}
             style={styles.generateButton}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
           >
-            {isGenerating ? 'Generating AI Itinerary...' : '🚀 Generate AI-Optimized Trip'}
-          </Button>
+            <Button
+              onPress={handleGenerateItinerary}
+              loading={isGenerating}
+              disabled={isGenerating}
+              style={styles.generateButtonInner}
+              textStyle={styles.generateButtonText}
+            >
+              {isGenerating ? 'Creating Your Perfect Trip...' : '🚀 Generate My Optimized Trip'}
+            </Button>
+          </LinearGradient>
           
           <Text style={styles.disclaimer}>
-            Our AI considers your career goals, networking opportunities, 
-            and recruiter appeal when crafting your perfect itinerary.
+            Our intelligent system considers your career goals, networking opportunities, 
+            and professional appeal when crafting your perfect itinerary.
           </Text>
         </View>
       </ScrollView>
@@ -301,30 +356,57 @@ const styles = StyleSheet.create({
     backgroundColor: colors.background,
   },
   header: {
-    padding: 20,
+    padding: 32,
     alignItems: 'center',
-    backgroundColor: colors.backgroundAlt,
-    marginBottom: 20,
+    marginBottom: 24,
+  },
+  headerTitle: {
+    fontSize: 32,
+    fontFamily: 'Poppins_700Bold',
+    color: colors.background,
+    marginBottom: 8,
+    textAlign: 'center',
+  },
+  headerSubtitle: {
+    fontSize: 16,
+    fontFamily: 'Nunito_400Regular',
+    color: colors.background,
+    textAlign: 'center',
+    opacity: 0.9,
   },
   section: {
     paddingHorizontal: 20,
-    marginBottom: 24,
+    marginBottom: 32,
   },
   sectionTitle: {
-    fontSize: 18,
-    fontWeight: '600',
+    fontSize: 22,
+    fontFamily: 'Poppins_600SemiBold',
     color: colors.text,
-    marginBottom: 12,
+    marginBottom: 16,
+  },
+  inputContainer: {
+    borderRadius: 16,
+    overflow: 'hidden',
+  },
+  input: {
+    backgroundColor: colors.cardAlt,
+    borderRadius: 16,
+    padding: 16,
+    fontSize: 16,
+    fontFamily: 'Nunito_400Regular',
+    color: colors.text,
+    borderWidth: 2,
+    borderColor: colors.borderLight,
   },
   inputLabel: {
     fontSize: 14,
-    fontWeight: '500',
+    fontFamily: 'Poppins_500Medium',
     color: colors.textSecondary,
-    marginBottom: 4,
+    marginBottom: 8,
   },
   dateRow: {
     flexDirection: 'row',
-    gap: 12,
+    gap: 16,
   },
   dateInput: {
     flex: 1,
@@ -332,28 +414,26 @@ const styles = StyleSheet.create({
   optionsGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 8,
+    gap: 12,
   },
   optionCard: {
-    backgroundColor: colors.backgroundAlt,
-    borderRadius: 12,
-    padding: 12,
+    borderRadius: 16,
+    padding: 16,
     alignItems: 'center',
     minWidth: 100,
-    borderWidth: 2,
-    borderColor: 'transparent',
+    minHeight: 80,
+    justifyContent: 'center',
   },
   selectedOption: {
-    backgroundColor: colors.primary,
-    borderColor: colors.primary,
+    transform: [{ scale: 1.05 }],
   },
   optionIcon: {
-    fontSize: 24,
-    marginBottom: 4,
+    fontSize: 28,
+    marginBottom: 8,
   },
   optionText: {
-    fontSize: 12,
-    fontWeight: '500',
+    fontSize: 14,
+    fontFamily: 'Poppins_500Medium',
     color: colors.text,
     textAlign: 'center',
   },
@@ -363,36 +443,58 @@ const styles = StyleSheet.create({
   interestsGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 8,
+    gap: 12,
   },
   interestChip: {
-    backgroundColor: colors.backgroundAlt,
     borderRadius: 20,
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderWidth: 1,
-    borderColor: colors.border,
+    overflow: 'hidden',
+  },
+  interestGradient: {
+    paddingHorizontal: 20,
+    paddingVertical: 12,
   },
   selectedInterest: {
-    backgroundColor: colors.primary,
-    borderColor: colors.primary,
+    transform: [{ scale: 1.05 }],
   },
   interestText: {
     fontSize: 14,
-    fontWeight: '500',
+    fontFamily: 'Nunito_500Medium',
     color: colors.text,
   },
   selectedInterestText: {
     color: colors.background,
   },
-  switchRow: {
+  switchContainer: {
+    marginBottom: 16,
+  },
+  switchCard: {
+    borderRadius: 16,
+    padding: 2,
+  },
+  switchContent: {
+    backgroundColor: colors.background,
+    borderRadius: 14,
+    padding: 20,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 16,
+  },
+  switchInfo: {
+    flex: 1,
+  },
+  switchTitle: {
+    fontSize: 18,
+    fontFamily: 'Poppins_600SemiBold',
+    color: colors.text,
+    marginBottom: 4,
+  },
+  switchDescription: {
+    fontSize: 14,
+    fontFamily: 'Nunito_400Regular',
+    color: colors.textSecondary,
   },
   interviewDetails: {
-    gap: 12,
+    gap: 16,
   },
   generateSection: {
     padding: 20,
@@ -400,13 +502,26 @@ const styles = StyleSheet.create({
   },
   generateButton: {
     width: '100%',
+    borderRadius: 20,
+    padding: 2,
     marginBottom: 16,
   },
+  generateButtonInner: {
+    backgroundColor: colors.background,
+    borderRadius: 18,
+    paddingVertical: 18,
+  },
+  generateButtonText: {
+    fontSize: 18,
+    fontFamily: 'Poppins_600SemiBold',
+    color: colors.tertiary,
+  },
   disclaimer: {
-    fontSize: 12,
+    fontSize: 13,
+    fontFamily: 'Nunito_400Regular',
     color: colors.textSecondary,
     textAlign: 'center',
-    lineHeight: 16,
+    lineHeight: 18,
     paddingHorizontal: 20,
   },
 });

@@ -9,16 +9,17 @@ import {
   Alert
 } from 'react-native';
 import { Stack, router, useLocalSearchParams } from 'expo-router';
+import { LinearGradient } from 'expo-linear-gradient';
 import { Button } from '@/components/button';
 import { IconSymbol } from '@/components/IconSymbol';
 import { colors, commonStyles } from '@/styles/commonStyles';
-import { TripItinerary, Activity, AIInsight } from '@/types/TripTypes';
-import { AITripService } from '@/services/AITripService';
+import { TripItinerary, Activity, SmartInsight } from '@/types/TripTypes';
+import { TripService } from '@/services/TripService';
 
 export default function TripResultsScreen() {
   const { itinerary: itineraryParam } = useLocalSearchParams();
   const [itinerary, setItinerary] = useState<TripItinerary | null>(null);
-  const [insights, setInsights] = useState<AIInsight[]>([]);
+  const [insights, setInsights] = useState<SmartInsight[]>([]);
   const [selectedDay, setSelectedDay] = useState(0);
 
   useEffect(() => {
@@ -26,7 +27,7 @@ export default function TripResultsScreen() {
       try {
         const parsedItinerary = JSON.parse(itineraryParam);
         setItinerary(parsedItinerary);
-        setInsights(AITripService.generateAIInsights(parsedItinerary));
+        setInsights(TripService.generateSmartInsights(parsedItinerary));
         console.log('Loaded itinerary:', parsedItinerary);
       } catch (error) {
         console.error('Error parsing itinerary:', error);
@@ -38,9 +39,12 @@ export default function TripResultsScreen() {
 
   if (!itinerary) {
     return (
-      <View style={commonStyles.container}>
-        <Text style={commonStyles.text}>Loading your AI-optimized itinerary...</Text>
-      </View>
+      <LinearGradient
+        colors={colors.gradients.primary}
+        style={commonStyles.container}
+      >
+        <Text style={styles.loadingText}>Creating your perfect itinerary...</Text>
+      </LinearGradient>
     );
   }
 
@@ -55,18 +59,18 @@ export default function TripResultsScreen() {
     }
   };
 
-  const getCategoryColor = (category: Activity['category']) => {
+  const getCategoryGradient = (category: Activity['category']) => {
     switch (category) {
-      case 'networking': return colors.primary;
-      case 'learning': return colors.secondary;
-      case 'sightseeing': return colors.accent;
-      case 'interview-prep': return colors.error;
-      case 'relaxation': return colors.success;
-      default: return colors.textSecondary;
+      case 'networking': return colors.gradients.primary;
+      case 'learning': return colors.gradients.secondary;
+      case 'sightseeing': return colors.gradients.accent;
+      case 'interview-prep': return colors.gradients.warm;
+      case 'relaxation': return colors.gradients.cool;
+      default: return colors.gradients.primary;
     }
   };
 
-  const getInsightIcon = (type: AIInsight['type']) => {
+  const getInsightIcon = (type: SmartInsight['type']) => {
     switch (type) {
       case 'networking': return '🌐';
       case 'learning': return '🎓';
@@ -88,7 +92,7 @@ export default function TripResultsScreen() {
   const handleShareItinerary = () => {
     Alert.alert(
       'Share Itinerary',
-      'This feature would allow you to share your AI-optimized itinerary with recruiters or on professional networks.',
+      'This feature would allow you to share your optimized itinerary with colleagues or on professional networks.',
       [{ text: 'OK' }]
     );
   };
@@ -105,7 +109,7 @@ export default function TripResultsScreen() {
     <>
       <Stack.Screen
         options={{
-          title: 'Your AI Trip Plan',
+          title: 'Your Perfect Trip',
           headerStyle: { backgroundColor: colors.background },
           headerTintColor: colors.text,
           headerRight: () => (
@@ -117,9 +121,14 @@ export default function TripResultsScreen() {
       />
       <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
         {/* Header Summary */}
-        <View style={styles.header}>
-          <Text style={commonStyles.title}>🎯 {itinerary.destination}</Text>
-          <Text style={commonStyles.textSecondary}>
+        <LinearGradient
+          colors={colors.gradients.primary}
+          style={styles.header}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+        >
+          <Text style={styles.headerTitle}>🎯 {itinerary.destination}</Text>
+          <Text style={styles.headerSubtitle}>
             {formatDate(itinerary.startDate)} - {formatDate(itinerary.endDate)}
           </Text>
           
@@ -129,38 +138,54 @@ export default function TripResultsScreen() {
               <Text style={styles.summaryLabel}>Total Cost</Text>
             </View>
             <View style={styles.summaryItem}>
-              <Text style={styles.summaryValue}>{itinerary.overallAiScore.toFixed(1)}/10</Text>
-              <Text style={styles.summaryLabel}>AI Score</Text>
+              <Text style={styles.summaryValue}>{itinerary.overallScore.toFixed(1)}/10</Text>
+              <Text style={styles.summaryLabel}>Experience Score</Text>
             </View>
             <View style={styles.summaryItem}>
               <Text style={styles.summaryValue}>{itinerary.days.length}</Text>
               <Text style={styles.summaryLabel}>Days</Text>
             </View>
           </View>
-        </View>
+        </LinearGradient>
 
         {/* Unique Selling Points */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>✨ Unique Selling Points</Text>
+          <Text style={styles.sectionTitle}>✨ Unique Benefits</Text>
           {itinerary.uniqueSellingPoints.map((usp, index) => (
-            <View key={index} style={styles.uspCard}>
-              <Text style={styles.uspText}>{usp}</Text>
-            </View>
+            <LinearGradient
+              key={index}
+              colors={colors.gradients.accent}
+              style={styles.uspCard}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+            >
+              <View style={styles.uspContent}>
+                <Text style={styles.uspText}>{usp}</Text>
+              </View>
+            </LinearGradient>
           ))}
         </View>
 
-        {/* AI Insights */}
+        {/* Smart Insights */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>🤖 AI Insights</Text>
+          <Text style={styles.sectionTitle}>🧠 Smart Insights</Text>
           {insights.map((insight, index) => (
-            <View key={index} style={styles.insightCard}>
-              <View style={styles.insightHeader}>
-                <Text style={styles.insightIcon}>{getInsightIcon(insight.type)}</Text>
-                <Text style={styles.insightTitle}>{insight.title}</Text>
+            <LinearGradient
+              key={index}
+              colors={colors.gradients.cool}
+              style={styles.insightCard}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+            >
+              <View style={styles.insightContent}>
+                <View style={styles.insightHeader}>
+                  <Text style={styles.insightIcon}>{getInsightIcon(insight.type)}</Text>
+                  <Text style={styles.insightTitle}>{insight.title}</Text>
+                </View>
+                <Text style={styles.insightDescription}>{insight.description}</Text>
+                <Text style={styles.insightImpact}>💡 {insight.impact}</Text>
               </View>
-              <Text style={styles.insightDescription}>{insight.description}</Text>
-              <Text style={styles.insightImpact}>💡 {insight.impact}</Text>
-            </View>
+            </LinearGradient>
           ))}
         </View>
 
@@ -171,24 +196,27 @@ export default function TripResultsScreen() {
             {itinerary.days.map((day, index) => (
               <Pressable
                 key={index}
-                style={[
-                  styles.dayTab,
-                  selectedDay === index && styles.selectedDayTab
-                ]}
                 onPress={() => setSelectedDay(index)}
               >
-                <Text style={[
-                  styles.dayTabText,
-                  selectedDay === index && styles.selectedDayTabText
-                ]}>
-                  Day {index + 1}
-                </Text>
-                <Text style={[
-                  styles.dayTabDate,
-                  selectedDay === index && styles.selectedDayTabText
-                ]}>
-                  {new Date(day.date).getDate()}
-                </Text>
+                <LinearGradient
+                  colors={selectedDay === index ? colors.gradients.secondary : [colors.cardAlt, colors.cardAlt]}
+                  style={styles.dayTab}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 1 }}
+                >
+                  <Text style={[
+                    styles.dayTabText,
+                    selectedDay === index && styles.selectedDayTabText
+                  ]}>
+                    Day {index + 1}
+                  </Text>
+                  <Text style={[
+                    styles.dayTabDate,
+                    selectedDay === index && styles.selectedDayTabText
+                  ]}>
+                    {new Date(day.date).getDate()}
+                  </Text>
+                </LinearGradient>
               </Pressable>
             ))}
           </ScrollView>
@@ -196,92 +224,126 @@ export default function TripResultsScreen() {
 
         {/* Selected Day Activities */}
         <View style={styles.section}>
-          <View style={styles.dayHeader}>
+          <LinearGradient
+            colors={colors.gradients.warm}
+            style={styles.dayHeader}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+          >
             <Text style={styles.dayTitle}>
               {formatDate(itinerary.days[selectedDay].date)}
             </Text>
-            <View style={styles.dayStats}>
-              <Text style={styles.dayStat}>
-                ${itinerary.days[selectedDay].totalCost} • AI Score: {itinerary.days[selectedDay].aiScore.toFixed(1)}/10
-              </Text>
-            </View>
-          </View>
+            <Text style={styles.dayStat}>
+              ${itinerary.days[selectedDay].totalCost} • Score: {itinerary.days[selectedDay].experienceScore.toFixed(1)}/10
+            </Text>
+          </LinearGradient>
 
           {itinerary.days[selectedDay].activities.map((activity, index) => (
-            <View key={activity.id} style={styles.activityCard}>
-              <View style={styles.activityHeader}>
-                <View style={styles.activityIcon}>
-                  <Text style={styles.activityIconText}>
-                    {getCategoryIcon(activity.category)}
-                  </Text>
-                </View>
-                <View style={styles.activityInfo}>
-                  <Text style={styles.activityName}>{activity.name}</Text>
-                  <Text style={styles.activityLocation}>📍 {activity.location}</Text>
-                </View>
-                <View style={styles.activityMeta}>
-                  <Text style={styles.activityDuration}>{activity.duration}h</Text>
-                  <Text style={styles.activityCost}>${activity.cost}</Text>
-                </View>
-              </View>
-              
-              <Text style={styles.activityDescription}>{activity.description}</Text>
-              
-              {activity.aiRelevance && (
-                <View style={styles.aiRelevanceBar}>
-                  <Text style={styles.aiRelevanceLabel}>AI Relevance:</Text>
-                  <View style={styles.aiRelevanceTrack}>
-                    <View 
-                      style={[
-                        styles.aiRelevanceFill, 
-                        { width: `${activity.aiRelevance * 10}%` }
-                      ]} 
-                    />
+            <LinearGradient
+              key={activity.id}
+              colors={getCategoryGradient(activity.category)}
+              style={styles.activityCard}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+            >
+              <View style={styles.activityContent}>
+                <View style={styles.activityHeader}>
+                  <View style={styles.activityIconContainer}>
+                    <Text style={styles.activityIcon}>
+                      {getCategoryIcon(activity.category)}
+                    </Text>
                   </View>
-                  <Text style={styles.aiRelevanceScore}>{activity.aiRelevance}/10</Text>
+                  <View style={styles.activityInfo}>
+                    <Text style={styles.activityName}>{activity.name}</Text>
+                    <Text style={styles.activityLocation}>📍 {activity.location}</Text>
+                  </View>
+                  <View style={styles.activityMeta}>
+                    <Text style={styles.activityDuration}>{activity.duration}h</Text>
+                    <Text style={styles.activityCost}>${activity.cost}</Text>
+                  </View>
                 </View>
-              )}
-              
-              {activity.recruiterImpact && (
-                <View style={styles.recruiterImpact}>
-                  <Text style={styles.recruiterImpactLabel}>🎯 Recruiter Impact:</Text>
-                  <Text style={styles.recruiterImpactText}>{activity.recruiterImpact}</Text>
-                </View>
-              )}
-            </View>
+                
+                <Text style={styles.activityDescription}>{activity.description}</Text>
+                
+                {activity.careerRelevance && (
+                  <View style={styles.relevanceBar}>
+                    <Text style={styles.relevanceLabel}>Career Relevance:</Text>
+                    <View style={styles.relevanceTrack}>
+                      <LinearGradient
+                        colors={colors.gradients.accent}
+                        style={[styles.relevanceFill, { width: `${activity.careerRelevance * 10}%` }]}
+                        start={{ x: 0, y: 0 }}
+                        end={{ x: 1, y: 0 }}
+                      />
+                    </View>
+                    <Text style={styles.relevanceScore}>{activity.careerRelevance}/10</Text>
+                  </View>
+                )}
+                
+                {activity.professionalImpact && (
+                  <View style={styles.professionalImpact}>
+                    <Text style={styles.professionalImpactLabel}>🎯 Professional Impact:</Text>
+                    <Text style={styles.professionalImpactText}>{activity.professionalImpact}</Text>
+                  </View>
+                )}
+              </View>
+            </LinearGradient>
           ))}
         </View>
 
-        {/* Recruiter Highlights */}
+        {/* Career Highlights */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>🏆 Recruiter Highlights</Text>
-          <Text style={commonStyles.textSecondary}>
+          <Text style={styles.sectionTitle}>🏆 Career Highlights</Text>
+          <Text style={styles.highlightsSubtitle}>
             Key points to mention in interviews:
           </Text>
-          {itinerary.recruiterHighlights.map((highlight, index) => (
-            <View key={index} style={styles.highlightItem}>
-              <Text style={styles.highlightBullet}>•</Text>
-              <Text style={styles.highlightText}>{highlight}</Text>
-            </View>
+          {itinerary.careerHighlights.map((highlight, index) => (
+            <LinearGradient
+              key={index}
+              colors={colors.gradients.secondary}
+              style={styles.highlightCard}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+            >
+              <View style={styles.highlightContent}>
+                <Text style={styles.highlightBullet}>•</Text>
+                <Text style={styles.highlightText}>{highlight}</Text>
+              </View>
+            </LinearGradient>
           ))}
         </View>
 
         {/* Action Buttons */}
         <View style={styles.actionSection}>
-          <Button
-            onPress={handleExportItinerary}
+          <LinearGradient
+            colors={colors.gradients.cool}
             style={styles.actionButton}
-            variant="outline"
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
           >
-            📄 Export Itinerary
-          </Button>
+            <Button
+              onPress={handleExportItinerary}
+              style={styles.actionButtonInner}
+              textStyle={styles.actionButtonText}
+            >
+              📄 Export Itinerary
+            </Button>
+          </LinearGradient>
           
-          <Button
-            onPress={() => router.push('/trip-planner')}
+          <LinearGradient
+            colors={colors.gradients.warm}
             style={styles.actionButton}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
           >
-            🔄 Plan Another Trip
-          </Button>
+            <Button
+              onPress={() => router.push('/trip-planner')}
+              style={styles.actionButtonInner}
+              textStyle={styles.actionButtonText}
+            >
+              🔄 Plan Another Trip
+            </Button>
+          </LinearGradient>
         </View>
       </ScrollView>
     </>
@@ -293,165 +355,194 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.background,
   },
+  loadingText: {
+    fontSize: 20,
+    fontFamily: 'Poppins_600SemiBold',
+    color: colors.background,
+    textAlign: 'center',
+  },
   header: {
-    padding: 20,
-    backgroundColor: colors.backgroundAlt,
+    padding: 32,
     alignItems: 'center',
+  },
+  headerTitle: {
+    fontSize: 32,
+    fontFamily: 'Poppins_700Bold',
+    color: colors.background,
+    marginBottom: 8,
+    textAlign: 'center',
+  },
+  headerSubtitle: {
+    fontSize: 16,
+    fontFamily: 'Nunito_400Regular',
+    color: colors.background,
+    marginBottom: 24,
+    opacity: 0.9,
   },
   summaryRow: {
     flexDirection: 'row',
     justifyContent: 'space-around',
     width: '100%',
-    marginTop: 16,
   },
   summaryItem: {
     alignItems: 'center',
   },
   summaryValue: {
-    fontSize: 20,
-    fontWeight: '700',
-    color: colors.primary,
+    fontSize: 24,
+    fontFamily: 'Poppins_700Bold',
+    color: colors.background,
   },
   summaryLabel: {
     fontSize: 12,
-    color: colors.textSecondary,
+    fontFamily: 'Nunito_400Regular',
+    color: colors.background,
     marginTop: 4,
+    opacity: 0.8,
   },
   section: {
     padding: 20,
   },
   sectionTitle: {
-    fontSize: 20,
-    fontWeight: '600',
+    fontSize: 24,
+    fontFamily: 'Poppins_700Bold',
     color: colors.text,
     marginBottom: 16,
   },
   uspCard: {
-    backgroundColor: colors.card,
-    borderRadius: 12,
+    borderRadius: 16,
+    marginBottom: 12,
+    padding: 2,
+  },
+  uspContent: {
+    backgroundColor: colors.background,
+    borderRadius: 14,
     padding: 16,
-    marginBottom: 8,
-    borderLeftWidth: 4,
-    borderLeftColor: colors.primary,
   },
   uspText: {
-    fontSize: 14,
+    fontSize: 15,
+    fontFamily: 'Nunito_500Medium',
     color: colors.text,
-    lineHeight: 20,
+    lineHeight: 22,
   },
   insightCard: {
-    backgroundColor: colors.card,
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 12,
-    borderWidth: 1,
-    borderColor: colors.border,
+    borderRadius: 16,
+    marginBottom: 16,
+    padding: 2,
+  },
+  insightContent: {
+    backgroundColor: colors.background,
+    borderRadius: 14,
+    padding: 20,
   },
   insightHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 8,
+    marginBottom: 12,
   },
   insightIcon: {
-    fontSize: 20,
-    marginRight: 8,
+    fontSize: 24,
+    marginRight: 12,
   },
   insightTitle: {
-    fontSize: 16,
-    fontWeight: '600',
+    fontSize: 18,
+    fontFamily: 'Poppins_600SemiBold',
     color: colors.text,
     flex: 1,
   },
   insightDescription: {
-    fontSize: 14,
+    fontSize: 15,
+    fontFamily: 'Nunito_400Regular',
     color: colors.text,
-    marginBottom: 8,
-    lineHeight: 20,
+    marginBottom: 12,
+    lineHeight: 22,
   },
   insightImpact: {
-    fontSize: 12,
+    fontSize: 13,
+    fontFamily: 'Nunito_400Regular',
     color: colors.textSecondary,
     fontStyle: 'italic',
   },
   daySelector: {
-    marginBottom: 16,
+    marginBottom: 20,
   },
   dayTab: {
-    backgroundColor: colors.backgroundAlt,
-    borderRadius: 20,
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    marginRight: 8,
+    borderRadius: 16,
+    paddingHorizontal: 20,
+    paddingVertical: 12,
+    marginRight: 12,
     alignItems: 'center',
-    minWidth: 60,
-  },
-  selectedDayTab: {
-    backgroundColor: colors.primary,
+    minWidth: 80,
   },
   dayTabText: {
     fontSize: 12,
-    fontWeight: '500',
+    fontFamily: 'Poppins_500Medium',
     color: colors.text,
   },
   selectedDayTabText: {
     color: colors.background,
   },
   dayTabDate: {
-    fontSize: 16,
-    fontWeight: '700',
+    fontSize: 18,
+    fontFamily: 'Poppins_700Bold',
     color: colors.text,
+    marginTop: 2,
   },
   dayHeader: {
+    borderRadius: 16,
+    padding: 20,
     marginBottom: 16,
   },
   dayTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: colors.text,
-  },
-  dayStats: {
-    marginTop: 4,
+    fontSize: 20,
+    fontFamily: 'Poppins_600SemiBold',
+    color: colors.background,
+    marginBottom: 4,
   },
   dayStat: {
     fontSize: 14,
-    color: colors.textSecondary,
+    fontFamily: 'Nunito_400Regular',
+    color: colors.background,
+    opacity: 0.9,
   },
   activityCard: {
-    backgroundColor: colors.card,
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 12,
-    borderWidth: 1,
-    borderColor: colors.border,
+    borderRadius: 16,
+    marginBottom: 16,
+    padding: 2,
+  },
+  activityContent: {
+    backgroundColor: colors.background,
+    borderRadius: 14,
+    padding: 20,
   },
   activityHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 12,
+    marginBottom: 16,
   },
-  activityIcon: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: colors.backgroundAlt,
+  activityIconContainer: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: colors.cardAlt,
     justifyContent: 'center',
     alignItems: 'center',
-    marginRight: 12,
+    marginRight: 16,
   },
-  activityIconText: {
-    fontSize: 18,
+  activityIcon: {
+    fontSize: 20,
   },
   activityInfo: {
     flex: 1,
   },
   activityName: {
     fontSize: 16,
-    fontWeight: '600',
+    fontFamily: 'Poppins_600SemiBold',
     color: colors.text,
-    marginBottom: 2,
+    marginBottom: 4,
   },
   activityLocation: {
-    fontSize: 12,
+    fontSize: 13,
+    fontFamily: 'Nunito_400Regular',
     color: colors.textSecondary,
   },
   activityMeta: {
@@ -459,85 +550,115 @@ const styles = StyleSheet.create({
   },
   activityDuration: {
     fontSize: 12,
+    fontFamily: 'Nunito_400Regular',
     color: colors.textSecondary,
   },
   activityCost: {
-    fontSize: 14,
-    fontWeight: '600',
+    fontSize: 16,
+    fontFamily: 'Poppins_600SemiBold',
     color: colors.primary,
+    marginTop: 2,
   },
   activityDescription: {
     fontSize: 14,
+    fontFamily: 'Nunito_400Regular',
     color: colors.text,
     lineHeight: 20,
-    marginBottom: 12,
+    marginBottom: 16,
   },
-  aiRelevanceBar: {
+  relevanceBar: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 8,
+    marginBottom: 12,
   },
-  aiRelevanceLabel: {
+  relevanceLabel: {
     fontSize: 12,
+    fontFamily: 'Poppins_500Medium',
     color: colors.textSecondary,
-    marginRight: 8,
+    marginRight: 12,
   },
-  aiRelevanceTrack: {
+  relevanceTrack: {
     flex: 1,
-    height: 4,
-    backgroundColor: colors.backgroundAlt,
-    borderRadius: 2,
-    marginRight: 8,
+    height: 6,
+    backgroundColor: colors.borderLight,
+    borderRadius: 3,
+    marginRight: 12,
+    overflow: 'hidden',
   },
-  aiRelevanceFill: {
+  relevanceFill: {
     height: '100%',
-    backgroundColor: colors.primary,
-    borderRadius: 2,
+    borderRadius: 3,
   },
-  aiRelevanceScore: {
+  relevanceScore: {
     fontSize: 12,
-    fontWeight: '600',
+    fontFamily: 'Poppins_600SemiBold',
     color: colors.primary,
   },
-  recruiterImpact: {
-    backgroundColor: colors.backgroundAlt,
-    borderRadius: 8,
-    padding: 12,
+  professionalImpact: {
+    backgroundColor: colors.cardAlt,
+    borderRadius: 12,
+    padding: 16,
   },
-  recruiterImpactLabel: {
-    fontSize: 12,
-    fontWeight: '600',
+  professionalImpactLabel: {
+    fontSize: 13,
+    fontFamily: 'Poppins_600SemiBold',
     color: colors.text,
-    marginBottom: 4,
+    marginBottom: 6,
   },
-  recruiterImpactText: {
-    fontSize: 12,
+  professionalImpactText: {
+    fontSize: 13,
+    fontFamily: 'Nunito_400Regular',
     color: colors.textSecondary,
-    lineHeight: 16,
+    lineHeight: 18,
   },
-  highlightItem: {
+  highlightsSubtitle: {
+    fontSize: 16,
+    fontFamily: 'Nunito_400Regular',
+    color: colors.textSecondary,
+    marginBottom: 16,
+  },
+  highlightCard: {
+    borderRadius: 12,
+    marginBottom: 12,
+    padding: 2,
+  },
+  highlightContent: {
+    backgroundColor: colors.background,
+    borderRadius: 10,
+    padding: 16,
     flexDirection: 'row',
     alignItems: 'flex-start',
-    marginBottom: 8,
   },
   highlightBullet: {
-    fontSize: 16,
+    fontSize: 18,
     color: colors.primary,
-    marginRight: 8,
+    marginRight: 12,
     marginTop: 2,
   },
   highlightText: {
     fontSize: 14,
+    fontFamily: 'Nunito_500Medium',
     color: colors.text,
     flex: 1,
     lineHeight: 20,
   },
   actionSection: {
     padding: 20,
-    gap: 12,
+    gap: 16,
   },
   actionButton: {
-    width: '100%',
+    borderRadius: 16,
+    padding: 2,
+  },
+  actionButtonInner: {
+    backgroundColor: colors.background,
+    borderRadius: 14,
+    paddingVertical: 16,
+  },
+  actionButtonText: {
+    fontSize: 16,
+    fontFamily: 'Poppins_600SemiBold',
+    color: colors.primary,
   },
   headerButton: {
     padding: 8,
