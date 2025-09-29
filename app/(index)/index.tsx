@@ -1,7 +1,7 @@
 
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import { Stack, router } from "expo-router";
-import { View, Text, StyleSheet, ScrollView, Pressable } from "react-native";
+import { View, Text, StyleSheet, ScrollView, Pressable, Animated, Dimensions } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { IconSymbol } from "@/components/IconSymbol";
 import { Button } from "@/components/button";
@@ -9,19 +9,118 @@ import { colors, commonStyles } from "@/styles/commonStyles";
 import HolidayImageGallery from "@/components/HolidayImageGallery";
 import DestinationCard from "@/components/DestinationCard";
 
+const { width, height } = Dimensions.get('window');
+
 export default function HomeScreen() {
+  // Animation values for dynamic background
+  const leafAnimation1 = useRef(new Animated.Value(0)).current;
+  const leafAnimation2 = useRef(new Animated.Value(0)).current;
+  const leafAnimation3 = useRef(new Animated.Value(0)).current;
+  const gradientAnimation = useRef(new Animated.Value(0)).current;
+  const pulseAnimation = useRef(new Animated.Value(1)).current;
+
+  useEffect(() => {
+    // Continuous leaf floating animations
+    const createLeafAnimation = (animValue: Animated.Value, duration: number, delay: number) => {
+      return Animated.loop(
+        Animated.sequence([
+          Animated.delay(delay),
+          Animated.timing(animValue, {
+            toValue: 1,
+            duration: duration,
+            useNativeDriver: true,
+          }),
+          Animated.timing(animValue, {
+            toValue: 0,
+            duration: duration,
+            useNativeDriver: true,
+          }),
+        ])
+      );
+    };
+
+    // Gradient color shifting animation
+    const gradientLoop = Animated.loop(
+      Animated.sequence([
+        Animated.timing(gradientAnimation, {
+          toValue: 1,
+          duration: 8000,
+          useNativeDriver: false,
+        }),
+        Animated.timing(gradientAnimation, {
+          toValue: 0,
+          duration: 8000,
+          useNativeDriver: false,
+        }),
+      ])
+    );
+
+    // Pulsing animation for organic feel
+    const pulseLoop = Animated.loop(
+      Animated.sequence([
+        Animated.timing(pulseAnimation, {
+          toValue: 1.05,
+          duration: 3000,
+          useNativeDriver: true,
+        }),
+        Animated.timing(pulseAnimation, {
+          toValue: 1,
+          duration: 3000,
+          useNativeDriver: true,
+        }),
+      ])
+    );
+
+    // Start all animations
+    createLeafAnimation(leafAnimation1, 6000, 0).start();
+    createLeafAnimation(leafAnimation2, 8000, 2000).start();
+    createLeafAnimation(leafAnimation3, 7000, 4000).start();
+    gradientLoop.start();
+    pulseLoop.start();
+
+    return () => {
+      leafAnimation1.stopAnimation();
+      leafAnimation2.stopAnimation();
+      leafAnimation3.stopAnimation();
+      gradientAnimation.stopAnimation();
+      pulseAnimation.stopAnimation();
+    };
+  }, []);
+
+  // Dynamic gradient colors that shift like sunlight through forest canopy
+  const dynamicGradientColors = gradientAnimation.interpolate({
+    inputRange: [0, 0.25, 0.5, 0.75, 1],
+    outputRange: [
+      '#1B4332', // Deep forest green
+      '#2D5016', // Rich moss green
+      '#40531B', // Jungle green
+      '#52734D', // Sage green
+      '#1B4332', // Back to deep forest
+    ],
+  });
+
+  const secondaryGradientColors = gradientAnimation.interpolate({
+    inputRange: [0, 0.33, 0.66, 1],
+    outputRange: [
+      '#2D5016', // Rich moss
+      '#40531B', // Jungle green
+      '#52734D', // Sage green
+      '#2D5016', // Back to moss
+    ],
+  });
+
   const features = [
     {
       title: "Smart Planning",
       description: "Intelligent itineraries optimized for career success",
       icon: "brain",
-      gradient: colors.gradients.primary,
+      gradient: colors.gradients.rainforest,
     },
     {
       title: "Professional Appeal",
       description: "Activities designed to impress hiring managers",
       icon: "target",
-      gradient: colors.gradients.secondary,
+      gradient: colors.gradients.canopy,
     },
     {
       title: "Global Networking",
@@ -33,7 +132,7 @@ export default function HomeScreen() {
       title: "Career Stories",
       description: "Build compelling narratives for interviews",
       icon: "briefcase",
-      gradient: colors.gradients.warm,
+      gradient: colors.gradients.earth,
     }
   ];
 
@@ -96,18 +195,113 @@ export default function HomeScreen() {
         }}
       />
       <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
-        {/* Hero Section with Gradient */}
-        <LinearGradient
-          colors={colors.gradients.primary}
-          style={styles.hero}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 1 }}
-        >
-          <View style={styles.heroContent}>
-            <Text style={styles.heroEmoji}>✈️🌟</Text>
+        {/* Dynamic Amazon Rainforest Hero Section */}
+        <View style={styles.heroContainer}>
+          {/* Animated Background Layers */}
+          <Animated.View style={[styles.backgroundLayer, { backgroundColor: dynamicGradientColors }]} />
+          <Animated.View style={[styles.backgroundLayer, styles.secondaryLayer, { backgroundColor: secondaryGradientColors, opacity: 0.7 }]} />
+          
+          {/* Floating Leaf Elements */}
+          <Animated.View
+            style={[
+              styles.leafElement,
+              styles.leaf1,
+              {
+                transform: [
+                  {
+                    translateY: leafAnimation1.interpolate({
+                      inputRange: [0, 1],
+                      outputRange: [0, -30],
+                    }),
+                  },
+                  {
+                    rotate: leafAnimation1.interpolate({
+                      inputRange: [0, 1],
+                      outputRange: ['0deg', '15deg'],
+                    }),
+                  },
+                ],
+                opacity: leafAnimation1.interpolate({
+                  inputRange: [0, 0.5, 1],
+                  outputRange: [0.3, 0.8, 0.3],
+                }),
+              },
+            ]}
+          >
+            <Text style={styles.leafEmoji}>🌿</Text>
+          </Animated.View>
+
+          <Animated.View
+            style={[
+              styles.leafElement,
+              styles.leaf2,
+              {
+                transform: [
+                  {
+                    translateY: leafAnimation2.interpolate({
+                      inputRange: [0, 1],
+                      outputRange: [0, -40],
+                    }),
+                  },
+                  {
+                    rotate: leafAnimation2.interpolate({
+                      inputRange: [0, 1],
+                      outputRange: ['0deg', '-20deg'],
+                    }),
+                  },
+                ],
+                opacity: leafAnimation2.interpolate({
+                  inputRange: [0, 0.5, 1],
+                  outputRange: [0.2, 0.7, 0.2],
+                }),
+              },
+            ]}
+          >
+            <Text style={styles.leafEmoji}>🍃</Text>
+          </Animated.View>
+
+          <Animated.View
+            style={[
+              styles.leafElement,
+              styles.leaf3,
+              {
+                transform: [
+                  {
+                    translateY: leafAnimation3.interpolate({
+                      inputRange: [0, 1],
+                      outputRange: [0, -25],
+                    }),
+                  },
+                  {
+                    rotate: leafAnimation3.interpolate({
+                      inputRange: [0, 1],
+                      outputRange: ['0deg', '10deg'],
+                    }),
+                  },
+                ],
+                opacity: leafAnimation3.interpolate({
+                  inputRange: [0, 0.5, 1],
+                  outputRange: [0.4, 0.9, 0.4],
+                }),
+              },
+            ]}
+          >
+            <Text style={styles.leafEmoji}>🌱</Text>
+          </Animated.View>
+
+          {/* Organic Pattern Overlay */}
+          <View style={styles.patternOverlay}>
+            <View style={styles.organicShape1} />
+            <View style={styles.organicShape2} />
+            <View style={styles.organicShape3} />
+          </View>
+
+          {/* Hero Content with Pulsing Animation */}
+          <Animated.View style={[styles.heroContent, { transform: [{ scale: pulseAnimation }] }]}>
+            <Text style={styles.heroEmoji}>🌳✈️</Text>
             <Text style={styles.heroTitle}>TravelPro</Text>
             <Text style={styles.heroSubtitle}>
-              The ultimate travel planner designed for ambitious professionals
+              Discover the world&apos;s hidden gems with nature-inspired adventures
             </Text>
             
             <Button
@@ -115,10 +309,15 @@ export default function HomeScreen() {
               style={styles.ctaButton}
               textStyle={styles.ctaButtonText}
             >
-              🚀 Start Planning Your Journey
+              🌿 Explore Wild Destinations
             </Button>
-          </View>
-        </LinearGradient>
+          </Animated.View>
+
+          {/* Subtle Light Rays */}
+          <View style={styles.lightRay1} />
+          <View style={styles.lightRay2} />
+          <View style={styles.lightRay3} />
+        </View>
 
         {/* Holiday Image Gallery */}
         <HolidayImageGallery />
@@ -177,7 +376,7 @@ export default function HomeScreen() {
             {benefits.map((benefit, index) => (
               <View key={index} style={styles.benefitItem}>
                 <LinearGradient
-                  colors={colors.gradients.accent}
+                  colors={colors.gradients.canopy}
                   style={styles.benefitDot}
                 />
                 <Text style={styles.benefitText}>{benefit}</Text>
@@ -195,19 +394,19 @@ export default function HomeScreen() {
                 number: "1",
                 title: "Input Your Preferences",
                 description: "Tell us your destination, dates, budget, and career focus",
-                color: colors.gradients.primary
+                color: colors.gradients.rainforest
               },
               {
                 number: "2", 
                 title: "Smart Analysis",
                 description: "Our system analyzes local opportunities, events, and networking possibilities",
-                color: colors.gradients.secondary
+                color: colors.gradients.canopy
               },
               {
                 number: "3",
                 title: "Get Your Optimized Itinerary",
                 description: "Receive a detailed plan with professional highlights and networking opportunities",
-                color: colors.gradients.accent
+                color: colors.gradients.earth
               }
             ].map((step, index) => (
               <View key={index} style={styles.step}>
@@ -230,7 +429,7 @@ export default function HomeScreen() {
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>💼 Perfect for Professionals</Text>
           <LinearGradient
-            colors={colors.gradients.cool}
+            colors={colors.gradients.canopy}
             style={styles.testimonialCard}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
@@ -249,7 +448,7 @@ export default function HomeScreen() {
 
         {/* CTA Section */}
         <LinearGradient
-          colors={colors.gradients.warm}
+          colors={colors.gradients.rainforest}
           style={styles.ctaSection}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
@@ -284,43 +483,157 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.background,
   },
-  hero: {
-    paddingVertical: 60,
-    paddingHorizontal: 20,
+  heroContainer: {
+    height: height * 0.75,
+    position: 'relative',
+    overflow: 'hidden',
     alignItems: 'center',
+    justifyContent: 'center',
+  },
+  backgroundLayer: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    width: '100%',
+    height: '100%',
+  },
+  secondaryLayer: {
+    transform: [{ rotate: '45deg' }, { scale: 1.5 }],
+  },
+  leafElement: {
+    position: 'absolute',
+    zIndex: 2,
+  },
+  leaf1: {
+    top: '20%',
+    left: '15%',
+  },
+  leaf2: {
+    top: '40%',
+    right: '20%',
+  },
+  leaf3: {
+    top: '60%',
+    left: '25%',
+  },
+  leafEmoji: {
+    fontSize: 32,
+    textShadowColor: 'rgba(0, 0, 0, 0.3)',
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 3,
+  },
+  patternOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    zIndex: 1,
+  },
+  organicShape1: {
+    position: 'absolute',
+    top: '10%',
+    right: '10%',
+    width: 80,
+    height: 80,
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    borderRadius: 40,
+    transform: [{ rotate: '45deg' }],
+  },
+  organicShape2: {
+    position: 'absolute',
+    bottom: '20%',
+    left: '5%',
+    width: 60,
+    height: 120,
+    backgroundColor: 'rgba(255, 255, 255, 0.08)',
+    borderRadius: 30,
+    transform: [{ rotate: '-30deg' }],
+  },
+  organicShape3: {
+    position: 'absolute',
+    top: '50%',
+    left: '70%',
+    width: 100,
+    height: 50,
+    backgroundColor: 'rgba(255, 255, 255, 0.06)',
+    borderRadius: 25,
+    transform: [{ rotate: '60deg' }],
+  },
+  lightRay1: {
+    position: 'absolute',
+    top: 0,
+    left: '20%',
+    width: 2,
+    height: '30%',
+    backgroundColor: 'rgba(255, 255, 255, 0.15)',
+    transform: [{ rotate: '15deg' }],
+  },
+  lightRay2: {
+    position: 'absolute',
+    top: '10%',
+    right: '30%',
+    width: 1,
+    height: '25%',
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    transform: [{ rotate: '-10deg' }],
+  },
+  lightRay3: {
+    position: 'absolute',
+    bottom: '20%',
+    left: '60%',
+    width: 1.5,
+    height: '20%',
+    backgroundColor: 'rgba(255, 255, 255, 0.12)',
+    transform: [{ rotate: '25deg' }],
   },
   heroContent: {
     alignItems: 'center',
     maxWidth: 400,
+    zIndex: 3,
+    paddingHorizontal: 20,
   },
   heroEmoji: {
     fontSize: 64,
     marginBottom: 16,
+    textShadowColor: 'rgba(0, 0, 0, 0.3)',
+    textShadowOffset: { width: 2, height: 2 },
+    textShadowRadius: 4,
   },
   heroTitle: {
     fontSize: 42,
     fontFamily: 'Poppins_700Bold',
-    color: colors.background,
+    color: '#FFFFFF',
     marginBottom: 12,
     textAlign: 'center',
+    textShadowColor: 'rgba(0, 0, 0, 0.4)',
+    textShadowOffset: { width: 2, height: 2 },
+    textShadowRadius: 6,
   },
   heroSubtitle: {
     fontSize: 18,
     fontFamily: 'Nunito_400Regular',
-    color: colors.background,
+    color: '#FFFFFF',
     textAlign: 'center',
     marginBottom: 32,
     lineHeight: 26,
-    opacity: 0.9,
+    opacity: 0.95,
+    textShadowColor: 'rgba(0, 0, 0, 0.3)',
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 3,
   },
   ctaButton: {
     width: '100%',
-    backgroundColor: colors.background,
+    backgroundColor: 'rgba(255, 255, 255, 0.95)',
     paddingVertical: 16,
     borderRadius: 16,
+    boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.2)',
+    elevation: 8,
   },
   ctaButtonText: {
-    color: colors.primary,
+    color: '#1B4332',
     fontSize: 18,
     fontFamily: 'Poppins_600SemiBold',
   },
@@ -489,13 +802,15 @@ const styles = StyleSheet.create({
   },
   ctaButtonSecondary: {
     width: '100%',
-    backgroundColor: colors.background,
+    backgroundColor: 'rgba(255, 255, 255, 0.95)',
     paddingVertical: 16,
     borderRadius: 16,
     marginBottom: 16,
+    boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.2)',
+    elevation: 8,
   },
   ctaButtonSecondaryText: {
-    color: colors.tertiary,
+    color: '#1B4332',
     fontSize: 18,
     fontFamily: 'Poppins_600SemiBold',
   },

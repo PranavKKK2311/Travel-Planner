@@ -22,13 +22,16 @@ export const colors = {
   warning: '#F59E0B',      // Amber
   error: '#EF4444',        // Red
   info: '#3B82F6',         // Blue
-  // Gradient colors for cards and backgrounds
+  // Gradient colors for cards and backgrounds - Amazon Rainforest Inspired
   gradients: {
-    primary: ['#6366F1', '#8B5CF6'],
-    secondary: ['#EC4899', '#F97316'],
-    accent: ['#10B981', '#059669'],
-    warm: ['#F59E0B', '#EF4444'],
-    cool: ['#3B82F6', '#6366F1'],
+    primary: ['#1B4332', '#2D5016'], // Deep forest to moss green
+    secondary: ['#40531B', '#52734D'], // Jungle to sage green
+    accent: ['#10B981', '#059669'], // Emerald greens
+    warm: ['#F59E0B', '#EF4444'], // Sunset through canopy
+    cool: ['#3B82F6', '#6366F1'], // Sky through leaves
+    rainforest: ['#1B4332', '#2D5016', '#40531B'], // Multi-layer forest
+    canopy: ['#52734D', '#74A478', '#95C79C'], // Light filtering through leaves
+    earth: ['#8B4513', '#A0522D', '#CD853F'], // Forest floor tones
   }
 };
 
